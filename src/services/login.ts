@@ -1,24 +1,24 @@
-export type request = {
-    username: string;
-    password: string;
+import type { JwtToken } from "./token"; 
+
+type request = {
+  username: string;
+  password: string;
 };
 
-export type jwtToken = {
-    token: string;
-    // expiresIn: number;
-    // refreshToken: string;
-};
-
-export function login(req: request): Promise<jwtToken> {
-    return new Promise((resolve, reject) => {
-        // Simulate an API call
-        setTimeout(() => {
-            if (req.username === "admin" && req.password === "password") {
-                const token: jwtToken = { token: "jwt-token" };
-                resolve(token);
-            } else {
-                reject(new Error("Invalid username or password"));
-            }
-        }, 1000);
-    });
+function login(req: request): Promise<JwtToken> {
+  return new Promise((resolve, reject) => {
+    if (req.username === "admin" && req.password === "password") {
+      const token: JwtToken = {
+        token: "jwt-token",
+        expiresIn: 65,
+        refreshToken: "refresh-token",
+        refreshExpiresIn: 7200,
+      };
+      resolve(token);
+    } else {
+      reject(new Error("Invalid username or password"));
+    }
+  });
 }
+
+export { login };

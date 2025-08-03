@@ -1,17 +1,14 @@
 import React from "react";
 import {
-    Container,
     TextField,
     Button,
     Typography,
     Box,
     Alert,
+    Paper,
 } from "@mui/material";
-// de lui tool we khdt mnha hagat zy button.....
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
-// da custom hook bta3y 
-// logic hst5dmu bdl ma a23ud aktbu kza mra
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -23,19 +20,43 @@ const LoginPage: React.FC = () => {
         error,
         handleLogin,
     } = useLogin();
+
     const handleSubmit = (e: React.FormEvent) => {
-        // 34n mn gherha hy3ml reload mn gher ma ashuf result
         e.preventDefault();
         handleLogin(() => navigate("/home"));
-        // lw 3mlt login successfully 
-        // ru7li 3la page home
     };
+
     return (
-        <Container maxWidth="sm">
-            <Box mt={10} p={4} boxShadow={10} borderRadius={11} bgcolor="darkgray">
-                <Typography variant="h1" mb={3} align="center" color="black">
-                    Login
+        <Box
+            sx={{
+                minHeight: "100vh",
+                width: "100vw", // lpage kamla tzhr
+                background: "linear-gradient(to right, #ece9e6, #ffffff)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 2,
+                overflow: "hidden",
+            }}
+        >
+            <Paper
+                elevation={10}
+                sx={{
+                    padding: 5,
+                    borderRadius: 4,
+                    width: "100%",
+                    maxWidth: 400,
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    mb={3}
+                    align="center"
+                    fontWeight="bold"
+                >
+                    Welcome Back
                 </Typography>
+
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Username"
@@ -59,18 +80,24 @@ const LoginPage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         fullWidth
-                        sx={{ mt: 2 }}
+                        sx={{
+                            mt: 2,
+                            py: 1.5,
+                            fontWeight: "bold",
+                            borderRadius: 2,
+                        }}
                     >
                         Login
                     </Button>
                 </form>
+
                 {error && (
                     <Alert severity="error" sx={{ mt: 2 }}>
                         {error}
                     </Alert>
                 )}
-            </Box>
-        </Container>
+            </Paper>
+        </Box>
     );
 };
 
