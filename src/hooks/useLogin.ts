@@ -28,7 +28,10 @@ export function useLogin() {
     const scheduleTokenRefresh = (newToken: JwtToken) => {
         // .current da mu2kt a2dr a3dl lrefresh bta3i
         if (timerRef.current) clearTimeout(timerRef.current);
-
+// offset validity of token 
+// expiresat ahsn mn in 
+// epoch mainly time format
+// 
         const refreshTime = (newToken.expiresIn - 60) * 1000;
         console.log(`🔁 Token will refresh in ${(refreshTime / 1000 / 60).toFixed(2)} minutes`);
 
@@ -67,3 +70,10 @@ export function useLogin() {
         handleLogin,
     };
 }
+
+
+// b3ml save lldetails li user byktbha username and password
+// bndh login func 
+// in case of login successfully b3ml save lltoken 
+// bgdd el token before it ends bw2t mu3yn
+// t5zen msg swa2 nga7 aw error

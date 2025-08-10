@@ -1,42 +1,77 @@
 import React from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, Pagination } from "@mui/material";
+import usePagination from "../hooks/usePagination";
 
 const HomePage: React.FC = () => {
+    const { page, totalPages, handleChange } = usePagination({
+        initialPage: 1,
+        totalPages: 2,
+        useRouting: true,
+        routeMap: {
+            1: "/home",
+            2: "/users",
+        },
+    });
+
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                height: "100vh",
                 width: "100vw",
-                background: "linear-gradient(to right, #fdfbfb, #ebedee)",
+                background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: 2,
-                overflow: "hidden", // mbaash b3ml scroll fy lpage
+                gap: 4,
+                overflow: "hidden",
             }}
         >
             <Paper
-                elevation={10}
+                elevation={24}
                 sx={{
-                    padding: 6,
+                    backdropFilter: "blur(10px)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    padding: 5,
                     borderRadius: 4,
-                    maxWidth: 600,
                     width: "100%",
+                    maxWidth: 600,
+                    color: "white",
                     textAlign: "center",
                 }}
             >
                 <Typography
-                    variant="h3"
+                    variant="h4"
                     fontWeight="bold"
                     gutterBottom
-                    sx={{ color: "#1976d2" }}
+                    sx={{ color: "white" }}
                 >
                     🎉 You're Logged In!
+                    Welcome to our Home Page
                 </Typography>
-                <Typography variant="h6" sx={{ color: "gray" }}>
-                    Welcome to the home page Feel free to explore.
+
+                <Typography sx={{ color: "#ccc" }}>
+                    This is page {page} of your content.
                 </Typography>
             </Paper>
+
+            <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handleChange}
+                color="primary"
+                sx={{
+                    "& .MuiPaginationItem-root": {
+                        color: "white",
+                        borderColor: "white",
+                    },
+                    "& .Mui-selected": {
+                        backgroundColor: "#1CB5E0 !important",
+                        color: "white",
+                    },
+                }}
+            />
         </Box>
     );
 };

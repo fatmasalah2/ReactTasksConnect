@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     TextField,
     Button,
@@ -6,46 +6,86 @@ import {
     Box,
     Alert,
     Paper,
+    FormControlLabel,
+    Checkbox,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "../hooks/useLogin";
+import { login } from "../services/login";
 
-const LoginPage: React.FC = () => {
+const LoginForm: React.FC = () => {
     const navigate = useNavigate();
-    const {
-        username,
-        setUsername,
-        password,
-        setPassword,
-        error,
-        handleLogin,
-    } = useLogin();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        handleLogin(() => navigate("/home"));
+    // lma t3ml login successfully 
+    // ru7li 3l home page
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
+    const handleLogin = async () => {
+        try {
+            // bb3t info luser le func login 
+            // we bbaa mstnia lrd li hwa token
+            const tokenData = await login({ username, password });
+            // sheli ay haga adema kanet mwguda
+            // 34n kn by3ml store 3la lvalues ladema lmwguda
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("tokenExpiresIn");
+            localStorage.removeItem("refreshTokenExpiresIn");
+
+            //   Store in localStorage
+            //   localStorage.setItem("token", tokenData.token);
+            //   localStorage.setItem("refreshToken", tokenData.refreshToken);
+            //   localStorage.setItem("tokenExpiresIn", tokenData.expiresIn.toString());
+            //   localStorage.setItem("refreshTokenExpiresIn", tokenData.refreshExpiresIn.toString());
+            //   Store all token data in one object
+            localStorage.setItem("authToken", JSON.stringify({
+                // bdl ma kul haga tbaa lw7dha 
+                // khalehum object
+                token: tokenData.token,
+                refreshToken: tokenData.refreshToken,
+                expiresIn: tokenData.expiresIn,
+                refreshExpiresIn: tokenData.refreshExpiresIn
+            }));
+
+            setError("");
+            // be shakl mbd2i mfesh errors
+
+            console.log("Logged in successfully!");
+            navigate("/home");
+        } catch (err: any) {
+            setError(err.message || "Login failed");
+        }
     };
-
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        handleLogin();
+    };
     return (
         <Box
             sx={{
-                minHeight: "100vh",
-                width: "100vw", // lpage kamla tzhr
-                background: "linear-gradient(to right, #ece9e6, #ffffff)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 2,
+                height: "100vh",
+                width: "100vw",
                 overflow: "hidden",
+                background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
             }}
         >
             <Paper
-                elevation={10}
+                elevation={24}
                 sx={{
+                    backdropFilter: "blur(10px)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
                     padding: 5,
                     borderRadius: 4,
                     width: "100%",
                     maxWidth: 400,
+                    color: "white",
                 }}
             >
                 <Typography
@@ -53,41 +93,89 @@ const LoginPage: React.FC = () => {
                     mb={3}
                     align="center"
                     fontWeight="bold"
+                    sx={{ color: "white" }}
                 >
-                    Welcome Back
+                    Welcome!
                 </Typography>
 
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label="Username"
-                        variant="outlined"
+                        variant="filled"
                         fullWidth
                         margin="normal"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        InputProps={{
+                            sx: {
+                                backgroundColor: "rgba(255,255,255,0.1)",
+                                borderRadius: 1,
+                                color: "white",
+                            },
+                        }}
+                        InputLabelProps={{ style: { color: "#ccc" } }}
                     />
+
                     <TextField
                         label="Password"
-                        variant="outlined"
+                        variant="filled"
                         type="password"
                         fullWidth
                         margin="normal"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        InputProps={{
+                            sx: {
+                                backgroundColor: "rgba(255,255,255,0.1)",
+                                borderRadius: 1,
+                                color: "white",
+                            },
+                        }}
+                        InputLabelProps={{ style: { color: "#ccc" } }}
                     />
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mt: 1,
+                        }}
+                    >
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    size="small"
+                                    sx={{
+                                        color: "#ccc",
+                                        "&.Mui-checked": { color: "white" },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Typography sx={{ fontSize: 14, color: "#ccc" }}>
+                                    Remember me
+                                </Typography>
+                            }
+                        />
+                        <Typography sx={{ fontSize: 13, color: "#aaa", cursor: "pointer" }}>
+                            Forgot Password?
+                        </Typography>
+                    </Box>
+
                     <Button
                         type="submit"
                         variant="contained"
-                        color="primary"
                         fullWidth
                         sx={{
-                            mt: 2,
+                            mt: 3,
                             py: 1.5,
                             fontWeight: "bold",
                             borderRadius: 2,
+                            background: "linear-gradient(90deg, #1CB5E0 0%, #000851 100%)",
                         }}
                     >
-                        Login
+                        LOGIN
                     </Button>
                 </form>
 
@@ -101,4 +189,4 @@ const LoginPage: React.FC = () => {
     );
 };
 
-export default LoginPage;
+export default LoginForm;
