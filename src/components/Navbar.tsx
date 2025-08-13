@@ -1,86 +1,40 @@
-import React, { useState } from "react";
-import {
-    AppBar,
-    Toolbar,
-    Typography,
-    Button,
-    Box,
-    Switch,
-    useTheme,
-    createTheme,
-    ThemeProvider,
-} from "@mui/material";
-import { Link } from "react-router-dom";
+import React from "react";
+import { AppBar, Toolbar, Typography, Button, Stack } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
-const Navbar: React.FC = () => {
-    const [darkMode, setDarkMode] = useState(true);
-    // start with dark
-    const toggleTheme = () => {
-        // de lfunction 
-        // li bt2lb lmode
-        setDarkMode((prev) => !prev);
-    };
-    // theme changes just for Navbar
-    const theme = createTheme({
-        // da theme special llnavbar
-        palette: {
-            mode: darkMode ? "dark" : "light",
-            primary: {
-                main: darkMode ? "#0f2027" : "#1976d2",
-            },
-        },
-    });
-    return (
-        <ThemeProvider theme={theme}>
-            <AppBar
-                position="static"
-                color="primary"
-                sx={{
-                    background: darkMode
-                        ? "linear-gradient(90deg, #0f2027, #203a43, #2c5364)"
-                        : "#1976d2",
-                    boxShadow: "none",
-                }}
-            >
-                <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        MyApp
-                    </Typography>
+interface NavbarProps {
+  toggleMode: () => void;
+  mode: "light" | "dark";
+}
 
-                    <Box>
-                        <Button
-                            component={Link}
-                            to="/"
-                            sx={{ color: "#fff", fontWeight: "bold", mx: 1 }}
-                        >
-                            Login
-                        </Button>
-                        <Button
-                            component={Link}
-                            to="/home"
-                            sx={{ color: "#fff", fontWeight: "bold", mx: 1 }}
-                        >
-                            Home
-                        </Button>
-                        <Button
-                            component={Link}
-                            to="/users"
-                            sx={{ color: "#fff", fontWeight: "bold", mx: 1 }}
-                        >
-                            Users
-                        </Button>
+const Navbar: React.FC<NavbarProps> = ({ toggleMode, mode }) => {
+  const navigate = useNavigate();
 
-                        <Switch
-                            checked={darkMode}
-                            onChange={toggleTheme}
-                            sx={{ ml: 2 }}
-                            color="default"
-                        />
-                    </Box>
-                </Toolbar>
-            </AppBar>
-        </ThemeProvider>
-    );
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    navigate("/");
+  };
+
+  return (
+    <AppBar position="fixed">
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          My App
+        </Typography>
+
+        <Stack direction="row" spacing={1}>
+          <Button color="inherit" component={Link} to="/home">Home</Button>
+          <Button color="inherit" component={Link} to="/users">Users</Button>
+          <Button color="inherit" component={Link} to="/business-units">Business Units</Button>
+          <Button color="inherit" component={Link} to="/active-directory">Active Directory</Button>
+          <Button color="inherit" onClick={handleLogout}>Logout</Button>
+          <Button color="inherit" onClick={toggleMode}>
+            {mode === "light" ? "Dark Mode" : "Light Mode"}
+          </Button>
+        </Stack>
+      </Toolbar>
+    </AppBar>
+  );
 };
 
 export default Navbar;

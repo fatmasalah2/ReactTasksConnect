@@ -1,18 +1,7 @@
 import React from "react";
-import { Box, Typography, Paper, Pagination } from "@mui/material";
-import usePagination from "../hooks/usePagination";
+import { Box, Typography, Paper } from "@mui/material";
 
 const HomePage: React.FC = () => {
-    const { page, totalPages, handleChange } = usePagination({
-        initialPage: 1,
-        totalPages: 2,
-        useRouting: true,
-        routeMap: {
-            1: "/home",
-            2: "/users",
-        },
-    });
-
     return (
         <Box
             sx={{
@@ -47,31 +36,13 @@ const HomePage: React.FC = () => {
                     gutterBottom
                     sx={{ color: "white" }}
                 >
-                    🎉 You're Logged In!
-                    Welcome to our Home Page
+                    🎉 You're Logged In! Welcome to our Home Page Fatmaaaaa
                 </Typography>
 
                 <Typography sx={{ color: "#ccc" }}>
-                    This is page {page} of your content.
+                    This is your home page content.
                 </Typography>
             </Paper>
-
-            <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handleChange}
-                color="primary"
-                sx={{
-                    "& .MuiPaginationItem-root": {
-                        color: "white",
-                        borderColor: "white",
-                    },
-                    "& .Mui-selected": {
-                        backgroundColor: "#1CB5E0 !important",
-                        color: "white",
-                    },
-                }}
-            />
         </Box>
     );
 };
