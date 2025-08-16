@@ -28,13 +28,13 @@ const Navbar: React.FC<NavbarProps> = ({ toggleMode, mode }) => {
         </Typography>
 
         <Stack direction="row" spacing={1}>
-          <Button color="inherit" component={Link} to="/home">Home</Button>
-          <Button color="inherit" component={Link} to="/users">Users</Button>
-          <Button color="inherit" component={Link} to="/business-units">Business Units</Button>
-          <Button color="inherit" component={Link} to="/active-directory">Active Directory</Button>
-          <Button color="inherit" onClick={handleLogout}>Logout</Button>
-          <Button color="inherit" onClick={toggleMode}>
-            {mode === "light" ? "Dark Mode" : "Light Mode"}
+          <Button color="inherit" component={Link} to="/home" sx={{ textTransform: "none" }}>Home</Button>
+          <Button color="inherit" component={Link} to="/users" sx={{ textTransform: "none" }}>Users</Button>
+          <Button color="inherit" component={Link} to="/business-units" sx={{ textTransform: "none" }}>Business units</Button>
+          <Button color="inherit" component={Link} to="/active-directory" sx={{ textTransform: "none" }}>Active directory</Button>
+          <Button color="inherit" onClick={handleLogout} sx={{ textTransform: "none" }}>Logout</Button>
+          <Button color="inherit" onClick={toggleMode} sx={{ textTransform: "none" }}>
+            {mode === "light" ? "Dark mode" : "Light mode"}
           </Button>
         </Stack>
       </Toolbar>
