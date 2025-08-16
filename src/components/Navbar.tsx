@@ -11,7 +11,12 @@ const Navbar: React.FC<NavbarProps> = ({ toggleMode, mode }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Clear all application data from localStorage
     localStorage.removeItem("authToken");
+    localStorage.removeItem("businessUnits");
+    localStorage.removeItem("directories");
+
+    // Navigate back to login page
     navigate("/");
   };
 

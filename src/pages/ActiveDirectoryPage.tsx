@@ -90,7 +90,9 @@ const ActiveDirectoryPage: React.FC = () => {
       sx={{
         height: "100vh",
         width: "100vw",
-        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+        background: theme.palette.mode === "light"
+          ? "linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9)"
+          : "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -98,6 +100,7 @@ const ActiveDirectoryPage: React.FC = () => {
         gap: 4,
         overflow: "hidden",
         p: 2,
+        transition: "background 0.3s ease",
       }}
     >
       <Paper
@@ -124,7 +127,7 @@ const ActiveDirectoryPage: React.FC = () => {
 
         <Button
           variant="contained"
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, textTransform: "none" }}
           onClick={handleAddNew}
         >
           Add New Directory

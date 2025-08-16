@@ -140,7 +140,7 @@ const UsersPage = () => {
         <Button
           variant="contained"
           onClick={handleAdd}
-          sx={{ bgcolor: theme.palette.primary.main, color: "#fff", "&:hover": { bgcolor: theme.palette.primary.dark } }}
+          sx={{ bgcolor: theme.palette.primary.main, color: "#fff", "&:hover": { bgcolor: theme.palette.primary.dark }, textTransform: "none" }}
         >
           + Add New User
         </Button>
@@ -174,13 +174,13 @@ const UsersPage = () => {
                 <TableCell>{getADName(user.activeDirectoryId)}</TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1}>
-                    <Button variant="outlined" size="small" onClick={() => handleShowDetails(user)}>
+                    <Button variant="outlined" size="small" onClick={() => handleShowDetails(user)} sx={{ textTransform: "none" }}>
                       Show Details
                     </Button>
-                    <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(user)}>
+                    <Button variant="outlined" color="primary" size="small" onClick={() => handleEdit(user)} sx={{ textTransform: "none" }}>
                       Update
                     </Button>
-                    <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(user.id)}>
+                    <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(user.id)} sx={{ textTransform: "none" }}>
                       Delete
                     </Button>
                   </Stack>

@@ -8,12 +8,14 @@ import {
   Paper,
   FormControlLabel,
   Checkbox,
+  useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 
 const LoginPage: React.FC = () => {
-    
+  const theme = useTheme();
+
   const navigate = useNavigate();
   const { username, setUsername, password, setPassword, error, message, handleLogin } = useLogin();
   const [rememberMe, setRememberMe] = React.useState(false);
@@ -31,23 +33,31 @@ const LoginPage: React.FC = () => {
         height: "100vh",
         width: "100vw",
         overflow: "hidden",
-        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+        background: theme.palette.mode === "light"
+          ? "linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9)"
+          : "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        transition: "background 0.3s ease",
       }}
     >
       <Paper
         elevation={24}
         sx={{
           backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(255, 255, 255, 0.05)",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backgroundColor: theme.palette.mode === "light"
+            ? "rgba(255, 255, 255, 0.9)"
+            : "rgba(255, 255, 255, 0.05)",
+          border: theme.palette.mode === "light"
+            ? "1px solid rgba(0, 0, 0, 0.1)"
+            : "1px solid rgba(255, 255, 255, 0.2)",
           padding: 5,
           borderRadius: 4,
           width: "100%",
           maxWidth: 400,
-          color: "white",
+          color: theme.palette.mode === "light" ? "inherit" : "white",
+          transition: "all 0.3s ease",
         }}
       >
         <Typography
@@ -55,7 +65,10 @@ const LoginPage: React.FC = () => {
           mb={3}
           align="center"
           fontWeight="bold"
-          sx={{ color: "white" }}
+          sx={{
+            color: theme.palette.mode === "light" ? "inherit" : "white",
+            transition: "color 0.3s ease"
+          }}
         >
           Welcome!
         </Typography>
@@ -106,9 +119,18 @@ const LoginPage: React.FC = () => {
                   sx={{ color: "#ccc", "&.Mui-checked": { color: "white" } }}
                 />
               }
-              label={<Typography sx={{ fontSize: 14, color: "#ccc" }}>Remember me</Typography>}
+              label={<Typography sx={{
+                fontSize: 14,
+                color: theme.palette.mode === "light" ? "text.secondary" : "#ccc",
+                transition: "color 0.3s ease"
+              }}>Remember me</Typography>}
             />
-            <Typography sx={{ fontSize: 13, color: "#aaa", cursor: "pointer" }}>Forgot Password?</Typography>
+            <Typography sx={{
+              fontSize: 13,
+              color: theme.palette.mode === "light" ? "text.secondary" : "#aaa",
+              cursor: "pointer",
+              transition: "color 0.3s ease"
+            }}>Forgot Password?</Typography>
           </Box>
 
           <Button
@@ -120,7 +142,10 @@ const LoginPage: React.FC = () => {
               py: 1.5,
               fontWeight: "bold",
               borderRadius: 2,
-              background: "linear-gradient(90deg, #1CB5E0 0%, #000851 100%)",
+              background: theme.palette.mode === "light"
+                ? "linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)"
+                : "linear-gradient(90deg, #1CB5E0 0%, #000851 100%)",
+              transition: "background 0.3s ease",
             }}
           >
             LOGIN
