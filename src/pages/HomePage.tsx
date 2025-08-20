@@ -49,14 +49,14 @@ const HomePage: React.FC = () => {
                         transition: "color 0.3s ease"
                     }}
                 >
-                    🎉 You're Logged In! Welcome to our Home Page Fatmaaaaa
+                    🎉 You're Logged In! Welcome to our Home Page 
                 </Typography>
 
                 <Typography sx={{
                     color: theme.palette.mode === "light" ? "text.secondary" : "#ccc",
                     transition: "color 0.3s ease"
                 }}>
-                    This is your home page content.
+                  
                 </Typography>
             </Paper>
         </Box>

@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 
 import usersData from "../data/usersData.json";
-import businessUnitsData from "../data/businessUnitData.json";
+// import businessUnitsData from "../data/businessUnitData.json";
 import activeDirectoriesData from "../data/activeDirectoryData.json";
 
 interface User {
@@ -41,10 +41,10 @@ interface ActiveDirectory {
   description: string;
 }
 
-const hiddenKeys = ["createdAt", "modifiedAt", "createdById", "modifiedById"];
+const hiddenKeys = ["createdAt", "modifiedAt", "createdById", "modifiedById", "password", "id"];
 
 const fieldLabels: { [key: string]: string } = {
-  id: "ID",
+  //id: "ID",
   username: "Username",
   firstName: "First Name",
   lastName: "Last Name",
@@ -55,7 +55,7 @@ const fieldLabels: { [key: string]: string } = {
   businessUnitId: "Business Unit",
   provider: "Provider",
   status: "Status",
-  password: "Password",
+  //password: "Password",
   activeDirectoryId: "Active Directory",
 };
 
@@ -64,6 +64,8 @@ const UsersPage = () => {
 
   // Users state
   const [users, setUsers] = useState<User[]>(usersData);
+
+  const businessUnitsData = JSON.parse(localStorage.getItem("businessUnits") || "[]") as BusinessUnit[];
 
   // Dropdown states
   const [businessUnits, setBusinessUnits] = useState<BusinessUnit[]>(businessUnitsData);
@@ -121,7 +123,7 @@ const UsersPage = () => {
   const paginatedUsers = users.slice(startIndex, startIndex + rowsPerPage);
 
   // Helper to get names
-  const getBUName = (id: string) => businessUnits.find((bu) => bu.id === id)?.name || "-";
+  const getBUName = (id: string) => businessUnitsData.find((bu) => bu.id === id)?.name || "-";
   const getADName = (id: string | number) => activeDirectories.find((ad) => ad.id === id)?.name || "-";
 
   // Sync dropdowns if underlying JSON changes (optional)

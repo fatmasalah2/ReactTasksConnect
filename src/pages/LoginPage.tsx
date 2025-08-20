@@ -13,7 +13,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const theme = useTheme();
 
   const navigate = useNavigate();
@@ -23,6 +27,7 @@ const LoginPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleLogin(() => {
+      setIsAuthenticated(true);
       navigate("/home");
     });
   };
@@ -145,10 +150,28 @@ const LoginPage: React.FC = () => {
               background: theme.palette.mode === "light"
                 ? "linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)"
                 : "linear-gradient(90deg, #1CB5E0 0%, #000851 100%)",
-              transition: "background 0.3s ease",
+              color: "#ffffff",
+              fontSize: "1.1rem",
+              textTransform: "none",
+              boxShadow: theme.palette.mode === "light"
+                ? "0 4px 12px rgba(25, 118, 210, 0.3)"
+                : "0 4px 12px rgba(28, 181, 224, 0.3)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                background: theme.palette.mode === "light"
+                  ? "linear-gradient(90deg, #1565c0 0%, #1976d2 100%)"
+                  : "linear-gradient(90deg, #0d47a1 0%, #1CB5E0 100%)",
+                boxShadow: theme.palette.mode === "light"
+                  ? "0 6px 16px rgba(25, 118, 210, 0.4)"
+                  : "0 6px 16px rgba(28, 181, 224, 0.4)",
+                transform: "translateY(-2px)",
+              },
+              "&:active": {
+                transform: "translateY(0px)",
+              },
             }}
           >
-            LOGIN
+            🔐 LOGIN
           </Button>
         </form>
 

@@ -23,6 +23,9 @@ export function useLogin() {
         scheduleTokenRefresh(updated);
       } catch (err: any) {
         setError("Failed to refresh token");
+        // If refresh fails, clear the token and redirect to login
+        localStorage.removeItem("authToken");
+        window.location.href = "/";
       }
     }, refreshTime);
   };
@@ -33,9 +36,17 @@ export function useLogin() {
 
     try {
       const res = await login({ username, password });
-      localStorage.setItem("authToken", JSON.stringify(res));
+
+      // Set expiration time as current time + expiresIn seconds
+      const tokenWithExpiry = {
+        ...res,
+        expiresIn: Math.floor(Date.now() / 1000) + res.expiresIn,
+        refreshExpiresIn: Math.floor(Date.now() / 1000) + res.refreshExpiresIn,
+      };
+
+      localStorage.setItem("authToken", JSON.stringify(tokenWithExpiry));
       setMessage("Login successful!");
-      scheduleTokenRefresh(res);
+      scheduleTokenRefresh(tokenWithExpiry);
       onSuccess();
     } catch (err: any) {
       setError(err.message || "Login failed");

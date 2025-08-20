@@ -19,6 +19,7 @@ import {
   useTheme,
 } from "@mui/material";
 import activeDirectoryData from "../data/activeDirectoryData.json";
+import { getButtonStyles } from "../theme";
 
 interface ActiveDirectory {
   id: number;
@@ -28,11 +29,17 @@ interface ActiveDirectory {
 
 const ActiveDirectoryPage: React.FC = () => {
   const theme = useTheme();
+  const buttonStyles = getButtonStyles(theme.palette.mode);
 
   // Load from localStorage or fallback to JSON data
   const [directories, setDirectories] = useState<ActiveDirectory[]>(() => {
-    const saved = localStorage.getItem("directories");
-    return saved ? JSON.parse(saved) : activeDirectoryData;
+    try {
+      const saved = localStorage.getItem("directories");
+      return saved ? JSON.parse(saved) : activeDirectoryData;
+    } catch (error) {
+      console.error("Error loading directories:", error);
+      return activeDirectoryData;
+    }
   });
 
   const [expandedDirectory, setExpandedDirectory] = useState<ActiveDirectory | null>(null);
@@ -44,28 +51,52 @@ const ActiveDirectoryPage: React.FC = () => {
 
   // Persist changes to localStorage
   useEffect(() => {
-    localStorage.setItem("directories", JSON.stringify(directories));
+    try {
+      localStorage.setItem("directories", JSON.stringify(directories));
+    } catch (error) {
+      console.error("Error saving directories:", error);
+    }
   }, [directories]);
 
   const handleShowDetails = (dir: ActiveDirectory) => setExpandedDirectory(dir);
   const handleCloseDetails = () => setExpandedDirectory(null);
 
-  const handleEdit = (dir: ActiveDirectory) => setEditDirectory(dir);
+  const handleEdit = (dir: ActiveDirectory) => {
+    console.log("Edit button clicked for directory:", dir);
+    setEditDirectory({ ...dir });
+  };
   const handleCloseEdit = () => setEditDirectory(null);
 
   const handleDelete = (id: number) => {
+    console.log("Delete button clicked for id:", id);
     if (window.confirm("Are you sure you want to delete this directory?")) {
       setDirectories((prev) => prev.filter((dir) => dir.id !== id));
     }
   };
 
   const handleSaveEdit = () => {
-    if (editDirectory) {
-      setDirectories((prev) =>
-        prev.map((dir) => (dir.id === editDirectory.id ? editDirectory : dir))
-      );
-      setEditDirectory(null);
+    if (!editDirectory) return;
+
+    console.log("Saving edit for directory:", editDirectory);
+
+    const trimmedName = editDirectory.name.trim();
+    const trimmedDescription = editDirectory.description.trim();
+
+    if (!trimmedName) {
+      alert("Name cannot be empty.");
+      return;
     }
+
+    setDirectories((prev) => {
+      const updated = prev.map((dir) =>
+        dir.id === editDirectory.id
+          ? { ...editDirectory, name: trimmedName, description: trimmedDescription }
+          : dir
+      );
+      console.log("Updated directories:", updated);
+      return updated;
+    });
+    setEditDirectory(null);
   };
 
   const handleAddNew = () => {
@@ -75,140 +106,114 @@ const ActiveDirectoryPage: React.FC = () => {
   };
 
   const handleSaveNew = () => {
-    if (!newName.trim()) return;
+    const trimmedName = newName.trim();
+    const trimmedDescription = newDescription.trim();
+
+    if (!trimmedName) {
+      alert("Name cannot be empty.");
+      return;
+    }
+
     const newDir: ActiveDirectory = {
       id: Date.now(),
-      name: newName.trim(),
-      description: newDescription.trim(),
+      name: trimmedName,
+      description: trimmedDescription,
     };
     setDirectories((prev) => [...prev, newDir]);
     setIsNewDialogOpen(false);
   };
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "100vw",
-        background: theme.palette.mode === "light"
-          ? "linear-gradient(135deg, #e3f2fd, #bbdefb, #90caf9)"
-          : "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 4,
-        overflow: "hidden",
-        p: 2,
-        transition: "background 0.3s ease",
-      }}
-    >
-      <Paper
-        elevation={24}
-        sx={{
-          backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(255, 255, 255, 0.05)",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          padding: 3,
-          borderRadius: 4,
-          width: "100%",
-          maxWidth: 1200,
-          color: "white",
-        }}
-      >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ textAlign: "center" }}
-        >
-          🗄️ Active Directory
-        </Typography>
+    <Box sx={{ width: "100vw", minHeight: "100vh", bgcolor: theme.palette.background.default, color: theme.palette.text.primary, p: 3 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ color: theme.palette.primary.main }}>
+        Active Directory
+      </Typography>
 
+      <Box mb={2}>
         <Button
           variant="contained"
-          sx={{ mb: 2, textTransform: "none" }}
           onClick={handleAddNew}
-        >
-          Add New Directory
-        </Button>
-
-        <TableContainer
-          component={Paper}
           sx={{
-            bgcolor: theme.palette.background.paper,
-            width: "100%",
-            mx: 0,
+            bgcolor: theme.palette.primary.main,
+            color: "#fff",
+            "&:hover": { bgcolor: theme.palette.primary.dark },
+            textTransform: "none"
           }}
         >
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                {["Name", "Description", "Actions"].map((header) => (
-                  <TableCell
-                    key={header}
-                    sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
-                  >
-                    {header}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {directories.map((dir) => (
-                <TableRow key={dir.id} hover>
-                  <TableCell>{dir.name || "-"}</TableCell>
-                  <TableCell>{dir.description || "-"}</TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1}>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ textTransform: "none" }}
-                        onClick={() => handleShowDetails(dir)}
-                      >
-                        Show Details
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ textTransform: "none" }}
-                        onClick={() => handleEdit(dir)}
-                      >
-                        Update
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        color="error"
-                        sx={{ textTransform: "none" }}
-                        onClick={() => handleDelete(dir.id)}
-                      >
-                        Delete
-                      </Button>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
+          + Add New Directory
+        </Button>
+      </Box>
+
+      <TableContainer component={Paper} sx={{ bgcolor: theme.palette.background.paper }}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              {["Name", "Description", "Actions"].map((header) => (
+                <TableCell key={header} sx={{ color: theme.palette.text.primary, fontWeight: "bold" }}>
+                  {header}
+                </TableCell>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {directories.map((dir) => (
+              <TableRow key={dir.id} hover>
+                <TableCell>{dir.name || "-"}</TableCell>
+                <TableCell>{dir.description || "-"}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleShowDetails(dir)}
+                      sx={{ textTransform: "none" }}
+                    >
+                      Show Details
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={() => handleEdit(dir)}
+                      sx={{ textTransform: "none" }}
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      onClick={() => handleDelete(dir.id)}
+                      sx={{ textTransform: "none" }}
+                    >
+                      Delete
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       {/* Show Details Dialog */}
-      <Dialog open={!!expandedDirectory} onClose={handleCloseDetails} fullWidth maxWidth="sm">
+      <Dialog open={!!expandedDirectory} onClose={handleCloseDetails} fullWidth maxWidth="md">
         <DialogTitle>Active Directory Details</DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers sx={{ bgcolor: theme.palette.background.default, maxHeight: "70vh", overflowY: "auto" }}>
           {expandedDirectory && (
-            <Table size="small">
+            <Table>
               <TableBody>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold", width: "30%" }}>Name</TableCell>
-                  <TableCell>{expandedDirectory.name || "-"}</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.secondary, width: "30%" }}>ID</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{expandedDirectory.id}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold", width: "30%" }}>Description</TableCell>
-                  <TableCell>{expandedDirectory.description || "-"}</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.secondary, width: "30%" }}>Name</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{expandedDirectory.name || "-"}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: "bold", color: theme.palette.text.secondary, width: "30%" }}>Description</TableCell>
+                  <TableCell sx={{ color: theme.palette.text.primary }}>{expandedDirectory.description || "-"}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -220,11 +225,11 @@ const ActiveDirectoryPage: React.FC = () => {
       </Dialog>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editDirectory} onClose={handleCloseEdit} fullWidth maxWidth="sm">
+      <Dialog open={!!editDirectory} onClose={handleCloseEdit} fullWidth maxWidth="md">
         <DialogTitle>Update Directory</DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers sx={{ bgcolor: theme.palette.background.default }}>
           {editDirectory && (
-            <Stack spacing={2}>
+            <Stack spacing={2} sx={{ mt: 1 }}>
               <TextField
                 label="Name"
                 value={editDirectory.name}
@@ -232,6 +237,7 @@ const ActiveDirectoryPage: React.FC = () => {
                   setEditDirectory({ ...editDirectory, name: e.target.value })
                 }
                 fullWidth
+                margin="dense"
               />
               <TextField
                 label="Description"
@@ -240,40 +246,47 @@ const ActiveDirectoryPage: React.FC = () => {
                   setEditDirectory({ ...editDirectory, description: e.target.value })
                 }
                 fullWidth
+                margin="dense"
+                multiline
+                rows={3}
               />
             </Stack>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEdit}>Cancel</Button>
-          <Button variant="contained" onClick={handleSaveEdit}>
+          <Button onClick={handleSaveEdit} variant="contained" color="primary">
             Save
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Add New Dialog */}
-      <Dialog open={isNewDialogOpen} onClose={() => setIsNewDialogOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={isNewDialogOpen} onClose={() => setIsNewDialogOpen(false)} fullWidth maxWidth="md">
         <DialogTitle>Add New Directory</DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={2}>
+        <DialogContent dividers sx={{ bgcolor: theme.palette.background.default }}>
+          <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
               label="Name"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               fullWidth
+              margin="dense"
             />
             <TextField
               label="Description"
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               fullWidth
+              margin="dense"
+              multiline
+              rows={3}
             />
           </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsNewDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSaveNew}>
+          <Button onClick={handleSaveNew} variant="contained" color="primary">
             Add
           </Button>
         </DialogActions>
